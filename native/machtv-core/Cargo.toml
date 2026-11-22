@@ -1,0 +1,29 @@
+[package]
+name = "machtv-core"
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+publish = false
+
+[lib]
+name = "machtv_core"
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+stremio-core = { git = "https://github.com/Stremio/stremio-core", rev = "a8c229589ca1e84e5c6c52f2dee11c31d7c5abe2", features = ["env-future-send", "derive"] }
+chrono = "0.4.45"
+futures = "0.3.34"
+http = "1.5.0"
+jni = "0.22.4"
+reqwest = { version = "0.12.28", default-features = false, features = ["rustls-tls-webpki-roots", "http2"] }
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.154"
+url = "2.5.8"
+tokio = { version = "1.54.1", features = ["rt-multi-thread", "sync"] }
+
+[dev-dependencies]
+tempfile = "3.27.0"
+
+[profile.release]
+lto = true
+opt-level = "s"

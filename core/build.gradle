@@ -1,0 +1,111 @@
+plugins {
+    id "com.android.library"
+    id "org.jetbrains.kotlin.plugin.serialization"
+}
+
+def rustCrate = rootProject.file("native/machtv-core")
+def rustJniLibs = file("build/rustJniLibs")
+def engineCrate = rootProject.file("native/machtv-engine")
+def streamServerDir = gradle.ext.streamServerDir
+def localProperties = new Properties()
+rootProject.file("local.properties").withInputStream { localProperties.load(it) }
+def vcpkgDir = new File(localProperties.getProperty("vcpkg.dir"))
+def ndkDir = new File(localProperties.getProperty("sdk.dir"), "ndk/28.2.13676358")
+def engineTargets = [
+    [abi: "arm64-v8a", triplet: "arm64-android", name: "Arm64", jniLibs: file("build/engineJniLibsArm64")],
+    [abi: "armeabi-v7a", triplet: "arm-android", name: "Armv7", jniLibs: file("build/engineJniLibsArmv7")],
+]
+
+android {
+    namespace = "io.github.terminalis.machtv.core"
+    compileSdk {
+        version = release(37)
+    }
+
+    defaultConfig {
+        minSdk 24
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    sourceSets {
+        main {
+            jniLibs.srcDirs(rustJniLibs, *engineTargets*.jniLibs)
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
+    }
+}
+
+def cargoNdkBuild = tasks.register("cargoNdkBuild", Exec) {
+    workingDir rustCrate
+    environment "CARGO_NDK_PLATFORM", "24"
+    commandLine "cargo", "ndk", "-t", "arm64-v8a", "-t", "armeabi-v7a", "-o", rustJniLibs.absolutePath, "build", "--release"
+    inputs.dir new File(rustCrate, "src")
+    inputs.file new File(rustCrate, "Cargo.toml")
+    inputs.file new File(rustCrate, "Cargo.lock")
+    outputs.dir rustJniLibs
+}
+
+def engineBuilds = engineTargets.collect { target ->
+    def installRoot = file("build/vcpkg_installed-${target.abi}")
+    def prefix = new File(installRoot, target.triplet)
+    def vcpkgInstall = tasks.register("vcpkgInstall${target.name}", Exec) {
+        environment "ANDROID_NDK_HOME", ndkDir.absolutePath
+        commandLine new File(vcpkgDir, "vcpkg").absolutePath, "install",
+            "--triplet", target.triplet,
+            "--x-manifest-root=${streamServerDir}",
+            "--x-install-root=${installRoot}",
+            "--overlay-triplets=${new File(engineCrate, "triplets")}",
+            "--overlay-ports=${new File(streamServerDir, "vcpkg-overlays")}"
+        inputs.file new File(streamServerDir, "vcpkg.json")
+        inputs.dir new File(engineCrate, "triplets")
+        outputs.dir installRoot
+    }
+    tasks.register("cargoNdkEngine${target.name}", Exec) {
+        dependsOn vcpkgInstall
+        workingDir engineCrate
+        environment "ANDROID_NDK_HOME", ndkDir.absolutePath
+        environment "VCPKG_ROOT", vcpkgDir.absolutePath
+        environment "VCPKG_INSTALLED_DIR", installRoot.absolutePath
+        environment "VCPKGRS_TRIPLET", target.triplet
+        environment "PKG_CONFIG_ALLOW_CROSS", "1"
+        environment "PKG_CONFIG_PATH", new File(prefix, "lib/pkgconfig").absolutePath
+        environment "PKG_CONFIG_SYSROOT_DIR", prefix.absolutePath
+        environment "OPENSSL_DIR", prefix.absolutePath
+        commandLine "cargo", "ndk", "-t", target.abi, "--platform", "24", "--link-libcxx-shared",
+            "-o", target.jniLibs.absolutePath, "build", "--release"
+        inputs.dir new File(engineCrate, "src")
+        inputs.file new File(engineCrate, "Cargo.toml")
+        inputs.file new File(engineCrate, "Cargo.lock")
+        inputs.dir rootProject.file("native/stream-server")
+        outputs.dir target.jniLibs
+        doLast {
+            delete fileTree(target.jniLibs) { exclude "**/libmachtv_engine.so", "**/libc++_shared.so" }
+        }
+    }
+}
+
+tasks.named("preBuild") {
+    dependsOn cargoNdkBuild
+    dependsOn engineBuilds
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2"
+    api "org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0"
+    implementation "rustls:rustls-platform-verifier:0.1.1"
+    testImplementation "junit:junit:4.13.2"
+    androidTestImplementation "androidx.test.ext:junit:1.3.0"
+    androidTestImplementation "androidx.test:runner:1.7.0"
+    androidTestImplementation "androidx.media3:media3-exoplayer:1.11.1"
+}

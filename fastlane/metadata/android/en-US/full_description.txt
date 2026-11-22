@@ -1,0 +1,17 @@
+Mach TV is a media center for Android TV, built on stremio-core. It uses Stremio addons without a Stremio account, and its library and settings stay on the TV.
+
+Home, Movies and Series: a billboard of popular titles over rows of posters, each with its IMDb rating. Movies and Series filter by Popular, Featured, New and genre.
+
+Details: the title's artwork, cast, genres and synopsis, with the streams your addons offer. A series shows its seasons and episodes beside them.
+
+Player: plays streams from your addons, torrents included, through an engine that runs on the TV. Subtitles come from the file and from OpenSubtitles. DTS, TrueHD, AC3 and E-AC3 audio play on TVs without their own decoders.
+
+Library: the titles you save, with watched marks, filters and sorting. Continue Watching, Movie Library and Series Library also appear as rows on the TV's home screen.
+
+Addons: a fresh install has Cinemeta and OpenSubtitles v3. Other addons install by URL, and an addon's own settings page opens in the app.
+
+Backup: exports the addons and the library to a file, and imports them on another TV.
+
+Themes: brushed metal in dark or light.
+
+Requires Android TV 7.0 or later.

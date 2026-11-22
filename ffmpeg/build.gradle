@@ -1,0 +1,66 @@
+plugins {
+    id "com.android.library"
+}
+
+def localProperties = new Properties()
+rootProject.file("local.properties").withInputStream { localProperties.load(it) }
+def ndkVersionName = "28.2.13676358"
+def ndkDir = new File(localProperties.getProperty("sdk.dir"), "ndk/${ndkVersionName}")
+def jniDir = file("src/main/jni")
+def ffmpegSource = new File(jniDir, "ffmpeg")
+def ffmpegTag = "n6.0.1"
+def ffmpegDecoders = ["dca", "truehd", "mlp", "ac3", "eac3"]
+
+android {
+    namespace = "androidx.media3.decoder.ffmpeg"
+    compileSdk {
+        version = release(37)
+    }
+    ndkVersion = ndkVersionName
+
+    defaultConfig {
+        minSdk 24
+        consumerProguardFiles "proguard-rules.txt"
+        ndk {
+            abiFilters "arm64-v8a", "armeabi-v7a"
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path = file("src/main/jni/CMakeLists.txt")
+            version = "3.21.0+"
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+def fetchFfmpeg = tasks.register("fetchFfmpeg", Exec) {
+    onlyIf { !ffmpegSource.exists() }
+    commandLine "git", "clone", "--depth", "1", "--branch", ffmpegTag, "https://git.ffmpeg.org/ffmpeg.git", ffmpegSource.absolutePath
+}
+
+def buildFfmpeg = tasks.register("buildFfmpeg", Exec) {
+    dependsOn fetchFfmpeg
+    workingDir jniDir
+    commandLine(["bash", "build_ffmpeg.sh", file("src/main").absolutePath, ndkDir.absolutePath, "linux-x86_64", "24"] + ffmpegDecoders)
+    inputs.file new File(jniDir, "build_ffmpeg.sh")
+    inputs.property "tag", ffmpegTag
+    inputs.property "decoders", ffmpegDecoders
+    outputs.dir new File(ffmpegSource, "android-libs")
+}
+
+tasks.named("preBuild") {
+    dependsOn buildFfmpeg
+}
+
+dependencies {
+    api "androidx.media3:media3-decoder:1.11.1"
+    implementation "androidx.media3:media3-exoplayer:1.11.1"
+    implementation "androidx.annotation:annotation:1.9.1"
+    compileOnly "org.checkerframework:checker-qual:3.43.0"
+}

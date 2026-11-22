@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="MachTv" parent="android:Theme.DeviceDefault.NoActionBar">
+        <item name="android:windowBackground">#FF121213</item>
+    </style>
+</resources>

@@ -1,0 +1,12 @@
+.gradle/
+.kotlin/
+.idea/
+*.iml
+build/
+local.properties
+native/machtv-core/target/
+native/machtv-engine/target/
+ffmpeg/src/main/jni/ffmpeg/
+.cxx/
+app/upload-keystore.jks
+*.apk
