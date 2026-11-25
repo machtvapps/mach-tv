@@ -18,7 +18,7 @@ fn throw(env: &mut Env, message: String) {
 }
 
 #[unsafe(no_mangle)]
-pub extern "C" fn Java_io_github_terminalis_machtv_core_NativeEngine_start(
+pub extern "C" fn Java_io_github_machtvapps_machtv_core_NativeEngine_start(
     mut env: EnvUnowned,
     _class: JClass,
     context: JObject,
@@ -52,7 +52,7 @@ pub extern "C" fn Java_io_github_terminalis_machtv_core_NativeEngine_start(
 }
 
 #[unsafe(no_mangle)]
-pub extern "C" fn Java_io_github_terminalis_machtv_core_NativeEngine_stop(
+pub extern "C" fn Java_io_github_machtvapps_machtv_core_NativeEngine_stop(
     mut env: EnvUnowned,
     _class: JClass,
 ) {

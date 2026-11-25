@@ -17,7 +17,7 @@ def engineTargets = [
 ]
 
 android {
-    namespace = "io.github.terminalis.machtv.core"
+    namespace = "io.github.machtvapps.machtv.core"
     compileSdk {
         version = release(37)
     }
