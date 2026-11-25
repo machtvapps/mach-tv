@@ -17,7 +17,7 @@ fn throw(env: &mut Env, message: String) {
 }
 
 #[unsafe(no_mangle)]
-pub extern "C" fn Java_io_github_terminalis_machtv_core_NativeCore_initialize(
+pub extern "C" fn Java_io_github_machtvapps_machtv_core_NativeCore_initialize(
     mut env: EnvUnowned,
     _class: JClass,
     data_dir: JString,
@@ -33,7 +33,7 @@ pub extern "C" fn Java_io_github_terminalis_machtv_core_NativeCore_initialize(
 }
 
 #[unsafe(no_mangle)]
-pub extern "C" fn Java_io_github_terminalis_machtv_core_NativeCore_dispatch(
+pub extern "C" fn Java_io_github_machtvapps_machtv_core_NativeCore_dispatch(
     mut env: EnvUnowned,
     _class: JClass,
     action_json: JString,
@@ -55,7 +55,7 @@ pub extern "C" fn Java_io_github_terminalis_machtv_core_NativeCore_dispatch(
 }
 
 #[unsafe(no_mangle)]
-pub extern "C" fn Java_io_github_terminalis_machtv_core_NativeCore_getState(
+pub extern "C" fn Java_io_github_machtvapps_machtv_core_NativeCore_getState(
     mut env: EnvUnowned,
     _class: JClass,
     field: JString,
@@ -74,7 +74,7 @@ pub extern "C" fn Java_io_github_terminalis_machtv_core_NativeCore_getState(
 }
 
 #[unsafe(no_mangle)]
-pub extern "C" fn Java_io_github_terminalis_machtv_core_NativeCore_getBoardDelta(
+pub extern "C" fn Java_io_github_machtvapps_machtv_core_NativeCore_getBoardDelta(
     mut env: EnvUnowned,
     _class: JClass,
     field: JString,
@@ -94,7 +94,7 @@ pub extern "C" fn Java_io_github_terminalis_machtv_core_NativeCore_getBoardDelta
 }
 
 #[unsafe(no_mangle)]
-pub extern "C" fn Java_io_github_terminalis_machtv_core_NativeCore_nextEvent(
+pub extern "C" fn Java_io_github_machtvapps_machtv_core_NativeCore_nextEvent(
     mut env: EnvUnowned,
     _class: JClass,
     timeout_ms: jlong,
@@ -109,7 +109,7 @@ pub extern "C" fn Java_io_github_terminalis_machtv_core_NativeCore_nextEvent(
 }
 
 #[unsafe(no_mangle)]
-pub extern "C" fn Java_io_github_terminalis_machtv_core_NativeCore_shutdown(
+pub extern "C" fn Java_io_github_machtvapps_machtv_core_NativeCore_shutdown(
     mut env: EnvUnowned,
     _class: JClass,
 ) {
@@ -123,7 +123,7 @@ pub extern "C" fn Java_io_github_terminalis_machtv_core_NativeCore_shutdown(
 }
 
 #[unsafe(no_mangle)]
-pub extern "C" fn Java_io_github_terminalis_machtv_core_NativeCore_exportBackup(
+pub extern "C" fn Java_io_github_machtvapps_machtv_core_NativeCore_exportBackup(
     mut env: EnvUnowned,
     _class: JClass,
 ) -> jstring {
@@ -140,7 +140,7 @@ pub extern "C" fn Java_io_github_terminalis_machtv_core_NativeCore_exportBackup(
 }
 
 #[unsafe(no_mangle)]
-pub extern "C" fn Java_io_github_terminalis_machtv_core_NativeCore_importBackup(
+pub extern "C" fn Java_io_github_machtvapps_machtv_core_NativeCore_importBackup(
     mut env: EnvUnowned,
     _class: JClass,
     json: JString,

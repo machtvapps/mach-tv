@@ -1,0 +1,5 @@
+Mach TV's new app ID, io.github.machtvapps.machtv, makes it a new app; the old one gets no more updates.
+
+To keep your addons and library, choose Settings → Backup → Export in the old app, then Import in the new one. Subtitles & audio, Streaming engine and Theme aren't in the backup, so set them again. Then uninstall the old app.
+
+F-Droid and Obtainium: the Mach TV apps repository, https://machtvapps.github.io/fdroid/repo.

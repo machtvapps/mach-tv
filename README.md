@@ -58,11 +58,11 @@ On an Android TV device over adb, the core library:
 
 ```bash
 ./gradlew :core:installDebugAndroidTest
-TESTS=io.github.terminalis.machtv.core.CoreBridgeTest
-RUNNER=io.github.terminalis.machtv.core.test/androidx.test.runner.AndroidJUnitRunner
+TESTS=io.github.machtvapps.machtv.core.CoreBridgeTest
+RUNNER=io.github.machtvapps.machtv.core.test/androidx.test.runner.AndroidJUnitRunner
 adb shell am instrument -w -e class "$TESTS#torrentioInstallsByUrl,$TESTS#cinemetaPopularMoviesLoads,$TESTS#installTorrentioBeforeRestart" "$RUNNER"
 adb shell am instrument -w -e class "$TESTS#addonsSurviveRestart" "$RUNNER"
-adb shell am instrument -w -e class io.github.terminalis.machtv.core.EngineTest "$RUNNER"
+adb shell am instrument -w -e class io.github.machtvapps.machtv.core.EngineTest "$RUNNER"
 ```
 
 The core tests need network access. The second run starts a new process and checks what the first stored. The engine test plays a Torrentio result for Big Buck Bunny through the on-device engine, which joins the torrent swarm. It needs port 11470 free, so leave Mach TV's Player and Streaming engine page first.
@@ -71,7 +71,7 @@ The audio decoders:
 
 ```bash
 ./gradlew :app:installDebug :app:installDebugAndroidTest
-adb shell am instrument -w -e class io.github.terminalis.machtv.FfmpegAudioTest io.github.terminalis.machtv.test/androidx.test.runner.AndroidJUnitRunner
+adb shell am instrument -w -e class io.github.machtvapps.machtv.FfmpegAudioTest io.github.machtvapps.machtv.test/androidx.test.runner.AndroidJUnitRunner
 ```
 
 `FfmpegAudioTest` plays 3-second 5.1 TrueHD, DTS, AC3 and E-AC3 clips through the app's renderers and checks which decoder, if any, plays each.
