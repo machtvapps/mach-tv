@@ -1,0 +1,5 @@
+Fixed: Settings → Backup → Export saves mach-tv-backup-<date>.json straight to the Download folder and shows the name. Before, it opened a share sheet that saved nothing on some TVs.
+
+Fixed: after an export or import, focus returns to the button you used.
+
+Coming from the old Mach TV (io.github.terminalis.machtv): this version installs as a new app. Import a backup in Settings → Backup, set Subtitles & audio, Streaming engine and Theme again, then uninstall the old app.
