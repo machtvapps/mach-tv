@@ -47,9 +47,13 @@ fun BackupScreen(core: Core) {
     var status by remember { mutableStateOf<String?>(null) }
     var busy by remember { mutableStateOf(false) }
     val exportFocus = remember { FocusRequester() }
-    LaunchedEffect(Unit) {
-        withFrameNanos { }
-        exportFocus.requestFocus()
+    val importFocus = remember { FocusRequester() }
+    var returnTo by remember { mutableStateOf(exportFocus) }
+    LaunchedEffect(busy) {
+        if (!busy) {
+            withFrameNanos { }
+            returnTo.requestFocus()
+        }
     }
     val picker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         if (uri == null) return@rememberLauncherForActivityResult
@@ -86,7 +90,10 @@ fun BackupScreen(core: Core) {
         BasicText("A backup holds your addons and your library, with watched state and progress.", style = MachText.body.onSlate())
         Row(Modifier.padding(top = 16.dp), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
             PillButton("Export", ::export, Modifier.focusRequester(exportFocus))
-            PillButton("Import", { picker.launch(arrayOf("application/json")) })
+            PillButton("Import", {
+                returnTo = importFocus
+                picker.launch(arrayOf("application/json"))
+            }, Modifier.focusRequester(importFocus))
         }
         status?.let { BasicText(it, style = MachText.rowTitle.onSlate(), modifier = Modifier.padding(top = 24.dp)) }
     }
